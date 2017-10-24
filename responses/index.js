@@ -1,7 +1,9 @@
 const {
   QUERY_LATEST,
   QUERY_ALL,
-  RESPONSE_BLOCKCHAIN
+  RESPONSE_BLOCKCHAIN,
+  QUERY_PEERS,
+  RESPONSE_PEERS
 } = require('./response-type');
 
 class Responses {
@@ -34,6 +36,21 @@ class Responses {
       data: JSON.stringify([
         blockchain.latestBlock
       ])
+    }
+  }
+
+  getQueryPeerList() {
+    console.log('Asking peer for peer list');
+    return {
+      type:QUERY_PEERS
+    }
+  }
+
+  getResponsePeerList(peerList) {
+    console.log('Sending peer list');
+    return {
+      type: RESPONSE_PEERS,
+      data: peerList.toString()
     }
   }
 }
