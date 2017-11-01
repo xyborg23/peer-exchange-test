@@ -27,7 +27,6 @@ class PeerToPeer{
 				this.initConnection.call(this, connection);
 			}
 		})).listen(port);
-		// console.log('Listening to peers on port' + server.address().port);
 		// console.log(`Listening to peers on ${server.address().address}:${server.address().port}`);
 	}
 
@@ -41,6 +40,22 @@ class PeerToPeer{
 			}
 		}));
 	}
+
+	portInUse(port, callback) {
+		var server = net.createServer(function(socket) {
+			socket.write('Echo server\r\n');
+			socket.pipe(socket);
+		});
+
+		server.listen(port);
+		server.on('error', function(e) {
+			callback(true);
+		});
+		server.on('listening', function(e) {
+			server.close();
+			callback(false);
+		});
+	};
 
 	discoverPeers() {
 		// p2p.getNewPeer((err) => {
@@ -158,6 +173,36 @@ class PeerToPeer{
 
 	mine(text){
 		blockchain.mine(text);
+	}
+
+	queryName(query) {
+		var chain = blockchain.get();
+		console.log(chain.length);
+		for (var i = chain.length - 1; i >= 0; i--) {
+			var chain_data = chain[i].data;
+			var words = chain_data.split(" ");
+			var name = words[0];
+			var public_key = words[1];
+			if(query === name) {
+				console.log(public_key);
+				break;
+			}
+		}
+	}
+
+	queryKey(query) {
+		var chain = blockchain.get();
+		console.log(chain.length);
+		for (var i = chain.length - 1; i >= 0; i--) {
+			var chain_data = chain[i].data;
+			var words = chain_data.split(" ");
+			var name = words[0];
+			var public_key = words[1];
+			if(query === public_key) {
+				console.log(name);
+				break;
+			}
+		}
 	}
 
 }

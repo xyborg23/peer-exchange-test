@@ -14,6 +14,7 @@ stdin.addListener("data", function(d) {
 		node.mine(txt);
 		node.broadcastLatest();
 	}
+	choice = choice.charAt(0);
 	console.log('Choice is ' + choice);
 	choice = Number(choice);
 	switch (choice) {
@@ -49,6 +50,23 @@ stdin.addListener("data", function(d) {
 			console.log('Exiting.....');
 			node.closeConnection();
 			break;
+		case 7:
+			node.portInUse(8000, function(returnValue) {
+				console.log(returnValue);
+				if(returnValue) {
+					node.connectToPeer('localhost', 8000);
+				}
+				else {
+					node.startServer(8000);
+				}
+			});
+			break;
+		case 8: 
+			node.queryName('blah');
+			break;
+		case 9: 
+			node.queryKey('blah');
+			break;
 		default:
 			console.log('Sorry, unrecognized option, please enter a valid choice');
 			break;
@@ -65,5 +83,9 @@ function printmenu() {
 	console.log('4 - Mine a block');
 	console.log('5 - Update Blockchain');
 	console.log('6 - Exit');
+	console.log('7 - Join Network');
+	console.log('8 - Query a name');
+	console.log('9 - Query a public key');
 	console.log('========================================');
+	process.stdout.write('Choice: ');
 }
