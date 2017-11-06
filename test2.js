@@ -16,47 +16,12 @@ stdin.addListener("data", function(d) {
 	choice = Number(choice);
 	switch (choice) {
 		case 1:
-			console.log('Creating network.....');
-			node.startServer(8000);
-			break;
-		case 2:
-			console.log('Connecting to peer.....');
-			node.connectToPeer('localhost', 8000);
-			break;
-		case 3:
-			console.log('Printing current chain.....');
-			// node.printBlockchain();
-			prettyPrintBlockchain(blockchain.blockchain);
-			break;
-		case 4:
-			// const rl = readline.createInterface({
-			// 	input: process.stdin,
-			// 	output: process.stdout
-			// });
-			// rl.on('line', (answer) => {
-			// 		console.log(answer);
-			// 		rl.close();
-			// 	})
-				// var text = readlineSync.question('Enter data for the block:');
-			// node.mine(text);
-			console.log('MINING >>>>>>>>>>>>>>>>');
-			node.mine(options);
-			node.broadcastLatest();
-			break;
-		case 5:
-			node.updateBlockchain();
-			// node.discoverPeers();
-			break;
-		case 6:
-			console.log('Exiting.....');
-			node.closeConnection();
-			break;
-		case 7:
 			node.portInUse(8000, function(returnValue) {
-				console.log(returnValue);
+				// console.log(returnValue);
 				if(returnValue) {
 					console.log('Connecting to the network....');
 					node.connectToPeer('localhost', 8000);
+					node.updateBlockchain();
 				}
 				else {
 					console.log('Starting the network....');
@@ -64,13 +29,32 @@ stdin.addListener("data", function(d) {
 				}
 			});
 			break;
-		case 8:
+		case 2:
+			console.log('MINING >>>>>>>>>>>>>>>>');
+			node.mine(options);
+			node.broadcastLatest();
+			break;
+		case 3:
+			console.log('Printing current chain.....');
+			// node.printBlockchain();
+			prettyPrintBlockchain(blockchain.blockchain);
+			break;
+		case 4:
+			node.updateBlockchain();
+			break;
+		case 5:
 			console.log('Querying for name ' + options);
 			node.queryName(options);
 			break;
-		case 9: 
+		case 6:
 			console.log('Querying for key ' + options);
 			node.queryKey(options);
+			break;
+		case 7:
+			break;
+		case 8:
+			console.log('Exiting.....');
+			node.closeConnection();
 			break;
 		default:
 			console.log('Sorry, unrecognized option, please enter a valid choice');
@@ -82,15 +66,14 @@ stdin.addListener("data", function(d) {
 function printmenu() {
 	console.log('========================================');
 	console.log('ENTER A CHOICE');
-	console.log('1 - Start Network');
-	console.log('2 - Connect to peer');
+	console.log('1 - Start Blockchain');
+	console.log('2 - Mine a block');
 	console.log('3 - Print Current Blockchain');
-	console.log('4 - Mine a block');
-	console.log('5 - Update Blockchain');
-	console.log('6 - Exit');
-	console.log('7 - Join Network');
-	console.log('8 - Query a name');
-	console.log('9 - Query a public key');
+	console.log('4 - Update Blockchain');
+	console.log('5 - Query a name');
+	console.log('6 - Query a public key');
+	console.log('7 - ');
+	console.log('8 - Exit');
 	console.log('========================================');
 	process.stdout.write('Choice: ');
 }

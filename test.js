@@ -12,6 +12,8 @@ const {
   RESPONSE_PEERS
 } = require('./responses/response-type');
 
+const colors = require('colors/safe');
+
 class PeerToPeer{
 	constructor () {
 		this.peers = [];
@@ -177,7 +179,8 @@ class PeerToPeer{
 
 	queryName(query) {
 		var chain = blockchain.get();
-		console.log(chain.length);
+		var flag = true;
+		// console.log(chain.length);
 		for (var i = chain.length - 1; i >= 0; i--) {
 			var chain_data = chain[i].data;
 			var words = chain_data.split(" ");
@@ -185,14 +188,19 @@ class PeerToPeer{
 			var public_key = words[1];
 			if(query === name) {
 				console.log(public_key);
+				flag = false;
 				break;
 			}
+		}
+		if(flag) {
+			console.log(colors.red('Could not find the query in current blockchain'));
 		}
 	}
 
 	queryKey(query) {
 		var chain = blockchain.get();
-		console.log(chain.length);
+		var flag = true;
+		// console.log(chain.length);
 		for (var i = chain.length - 1; i >= 0; i--) {
 			var chain_data = chain[i].data;
 			var words = chain_data.split(" ");
@@ -200,8 +208,12 @@ class PeerToPeer{
 			var public_key = words[1];
 			if(query === public_key) {
 				console.log(name);
+				flag = false;
 				break;
 			}
+		}
+		if(flag) {
+			console.log(colors.red('Could not find the query in current blockchain'));
 		}
 	}
 
