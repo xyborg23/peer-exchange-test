@@ -5,10 +5,11 @@ module.exports = class Block {
     return new Block(
       0,
       '0',
-      1501122600,
-      'Blockchain PKI System',
-      '000098dd0adb728d0dd7949784b577cdf2d5b4609c40138d70bbd6ddade12f05',
-      98921
+      1509989748.459,
+      'Blockchain PKI',
+      '0',
+      '0000849f7250903ea57f1614e1d16fc750a6c451e48cf52f769214e0c27e38ba',
+      113708
     )
   }
 
@@ -16,14 +17,16 @@ module.exports = class Block {
     index = 0,
     previousHash = '0',
     timestamp = new Date().getTime() / 1000,
-    data = 'none',
+    name = 'none',
+    publickey = '0',
     hash = '',
     nonce = 0
   ) {
     this.index = index
     this.previousHash = previousHash.toString()
     this.timestamp = timestamp
-    this.data = data
+    this.name = name
+    this.publickey = publickey.toString()
     this.hash = hash.toString()
     this.nonce = nonce
   }

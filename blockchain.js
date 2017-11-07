@@ -1,5 +1,6 @@
-const Block = require('./block')
-const CryptoJS = require('crypto-js')
+const Block = require('./block');
+const CryptoJS = require('crypto-js');
+const colors = require('colors/safe');
 
 class Blockchain {
   constructor () {
@@ -15,33 +16,33 @@ class Blockchain {
     return this.blockchain[this.blockchain.length - 1]
   }
 
-  mine (seed) {
-    const newBlock = this.generateNextBlock(seed)
+  mine (name, pk) {
+    const newBlock = this.generateNextBlock(name, pk)
     if(this.addBlock(newBlock)) {
-      console.log("Congratulations! A new block was mined.")
+      console.log(colors.green("Congratulations! A new block was mined."));
     }
   }
 
   replaceChain (newBlocks) {
     if (!this.isValidChain(newBlocks)) {
-      console.log("Replacement chain is not valid. Won't replace existing blockchain.")
+      console.log(colors.magenta("Replacement chain is not valid. Won't replace existing blockchain."));
       return null;
     }
 
     if (newBlocks.length <= this.blockchain.length) {
-      console.log("Replacement chain is shorter than original. Won't replace existing blockchain.")
+      console.log(colors.magenta("Replacement chain is shorter than original. Won't replace existing blockchain."));
       return null;
     }
 
-    console.log('Received blockchain is valid. Replacing current blockchain with received blockchain')
+    console.log(colors.magenta('Received blockchain is valid. Replacing current blockchain with received blockchain'));
     this.blockchain = newBlocks.map(json => new Block(
-      json.index, json.previousHash, json.timestamp, json.data, json.hash, json.nonce
+      json.index, json.previousHash, json.timestamp, json.name, json.publickey, json.hash, json.nonce
     ))
   }
 
   isValidChain (blockchainToValidate) {
     if (JSON.stringify(blockchainToValidate[0]) !== JSON.stringify(Block.genesis)) {
-      return false
+      return false;
     }
 
     const tempBlocks = [blockchainToValidate[0]]
@@ -49,10 +50,10 @@ class Blockchain {
       if (this.isValidNewBlock(blockchainToValidate[i], tempBlocks[i - 1])) {
         tempBlocks.push(blockchainToValidate[i])
       } else {
-        return false
+        return false;
       }
     }
-    return true
+    return true;
   }
 
   addBlock (newBlock) {
@@ -66,39 +67,39 @@ class Blockchain {
   addBlockFromPeer(json) {
     if (this.isValidNewBlock(json, this.latestBlock)) {
       this.blockchain.push(new Block(
-        json.index, json.previousHash, json.timestamp, json.data, json.hash, json.nonce
+        json.index, json.previousHash, json.timestamp, json.name, json.publickey, json.hash, json.nonce
       ))
     }
   }
 
   calculateHashForBlock (block) {
-    return this.calculateHash(block.index, block.previousHash, block.timestamp, block.data, block.nonce)
+    return this.calculateHash(block.index, block.previousHash, block.timestamp, block.name, block.publickey, block.nonce);
   }
 
-  calculateHash (index, previousHash, timestamp, data, nonce) {
-    return CryptoJS.SHA256(index + previousHash + timestamp + data + nonce).toString()
+  calculateHash (index, previousHash, timestamp, name, publickey, nonce) {
+    return CryptoJS.SHA256(index + previousHash + timestamp + name + publickey + nonce).toString();
   }
 
   isValidNewBlock (newBlock, previousBlock) {
     const blockHash = this.calculateHashForBlock(newBlock);
 
     if (previousBlock.index + 1 !== newBlock.index) {
-      console.log('new block has invalid index')
-      return false
+      console.log(colors.red('New block has invalid index'));
+      return false;
     } else if (previousBlock.hash !== newBlock.previousHash) {
-      console.log('new block has invalid previous hash')
-      return false
+      console.log(colors.red('new block has invalid previous hash'));
+      return false;
     } else if (blockHash !== newBlock.hash) {
-      console.log('invalid hash: ${blockHash} ${newBlock.has}')
-      return false
+      console.log(colors.red(`invalid hash: ${blockHash} ${newBlock.hash}`));
+      return false;
     } else if (!this.isValidHashDifficulty(this.calculateHashForBlock(newBlock))) {
-      console.log('invalid hash does not meet difficulty requirements: ${this.calculateHashForBlock(newBlock)}');
+      console.log(colors.red(`invalid hash does not meet difficulty requirements: ${this.calculateHashForBlock(newBlock)}`));
       return false;
     }
     return true
   }
 
-  generateNextBlock (blockData) {
+  generateNextBlock (blockName, blockPublicKey) {
     const previousBlock = this.latestBlock;
     const nextIndex = previousBlock.index + 1;
     const nextTimestamp = new Date().getTime() / 1000
@@ -106,9 +107,9 @@ class Blockchain {
     let nextHash = '';
     while(!this.isValidHashDifficulty(nextHash)) {     
       nonce = nonce + 1;
-      nextHash = this.calculateHash(nextIndex, previousBlock.hash, nextTimestamp, blockData, nonce);
+      nextHash = this.calculateHash(nextIndex, previousBlock.hash, nextTimestamp, blockName, blockPublicKey, nonce);
     }
-    const nextBlock = new Block(nextIndex, previousBlock.hash, nextTimestamp, blockData, nextHash, nonce);
+    const nextBlock = new Block(nextIndex, previousBlock.hash, nextTimestamp, blockName, blockPublicKey, nextHash, nonce);
     return nextBlock;
   }
 

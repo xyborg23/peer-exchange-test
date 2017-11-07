@@ -31,7 +31,12 @@ stdin.addListener("data", function(d) {
 			break;
 		case 2:
 			console.log('MINING >>>>>>>>>>>>>>>>');
-			node.mine(options);
+			options = options.split(' ');
+			var option_name = options[0];
+			var option_publickey = options[1];
+			// console.log(`Option Name is ${option_name} and type ${typeof option_name}`);
+			// console.log(`Option Public Key is ${option_publickey} and type ${typeof option_publickey}`);
+			node.mine(option_name, option_publickey);
 			node.broadcastLatest();
 			break;
 		case 3:
