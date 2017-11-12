@@ -33,12 +33,29 @@ vorpal
 	});
 
 vorpal
-	.command('mine <name> <public_key>', 'Mine a new block')
+	.command('register <name> <public_key>', 'Mine a new block')
 	.action(function(args, callback) {
 		if(args.name && args.public_key) {
 			var mine_progress = new Spinner('Mining a block, please wait...');
 			mine_progress.start();
 			node.mine(args.name, args.public_key);
+			node.broadcastLatest();
+			mine_progress.stop();
+		}
+		else {
+			console.log(colors.red('The arguments are invalid!'));
+			console.log(colors.red('Enter both a name and public key'));
+		}
+		callback();
+	});
+
+vorpal
+	.command('update <name> <public_key>', 'Mine a new block')
+	.action(function(args, callback) {
+		if(args.name && args.public_key) {
+			var mine_progress = new Spinner('Mining a block, please wait...');
+			mine_progress.start();
+			node.mineUpdate(args.name, args.public_key);
 			node.broadcastLatest();
 			mine_progress.stop();
 		}
@@ -57,7 +74,7 @@ vorpal
 	});
 
 vorpal
-	.command('update', 'Update the blockchain with the latest blockchain')
+	.command('updatechain', 'Update the blockchain with the latest blockchain')
 	.action(function(args, callback) {
 		node.updateBlockchain();
 		callback();

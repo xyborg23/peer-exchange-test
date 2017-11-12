@@ -16,8 +16,8 @@ class Blockchain {
     return this.blockchain[this.blockchain.length - 1]
   }
 
-  mine (name, pk) {
-    const newBlock = this.generateNextBlock(name, pk)
+  mine (name, pk, minerID) {
+    const newBlock = this.generateNextBlock(name, pk, minerID)
     if(this.addBlock(newBlock)) {
       console.log(colors.green("Congratulations! A new block was mined."));
     }
@@ -36,7 +36,7 @@ class Blockchain {
 
     console.log(colors.magenta('Received blockchain is valid. Replacing current blockchain with received blockchain'));
     this.blockchain = newBlocks.map(json => new Block(
-      json.index, json.previousHash, json.timestamp, json.name, json.publickey, json.hash, json.nonce
+      json.index, json.previousHash, json.timestamp, json.name, json.publickey, json.hash, json.nonce, json.minerID
     ))
   }
 
@@ -67,7 +67,7 @@ class Blockchain {
   addBlockFromPeer(json) {
     if (this.isValidNewBlock(json, this.latestBlock)) {
       this.blockchain.push(new Block(
-        json.index, json.previousHash, json.timestamp, json.name, json.publickey, json.hash, json.nonce
+        json.index, json.previousHash, json.timestamp, json.name, json.publickey, json.hash, json.nonce, json.minerID
       ))
     }
   }
@@ -99,17 +99,17 @@ class Blockchain {
     return true
   }
 
-  generateNextBlock (blockName, blockPublicKey) {
+  generateNextBlock (blockName, blockPublicKey, minerID) {
     const previousBlock = this.latestBlock;
     const nextIndex = previousBlock.index + 1;
-    const nextTimestamp = new Date().getTime() / 1000
+    const nextTimestamp = new Date().getTime() / 1000;
     let nonce = 0;
     let nextHash = '';
     while(!this.isValidHashDifficulty(nextHash)) {     
       nonce = nonce + 1;
       nextHash = this.calculateHash(nextIndex, previousBlock.hash, nextTimestamp, blockName, blockPublicKey, nonce);
     }
-    const nextBlock = new Block(nextIndex, previousBlock.hash, nextTimestamp, blockName, blockPublicKey, nextHash, nonce);
+    const nextBlock = new Block(nextIndex, previousBlock.hash, nextTimestamp, blockName, blockPublicKey, nextHash, nonce, minerID);
     return nextBlock;
   }
 
@@ -120,6 +120,15 @@ class Blockchain {
       }
     }
     return i === this.difficulty;
+  }
+
+  findMinerID(name) {
+    for(let i = 0; i < this.blockchain.length; i ++) {
+      if(this.blockchain[i].name == name) {
+        return this.blockchain[i].minerID;
+      }
+    }
+    return -1;
   }
 }
 

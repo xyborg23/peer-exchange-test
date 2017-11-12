@@ -9,7 +9,8 @@ module.exports = class Block {
       'Blockchain PKI',
       '0',
       '0000849f7250903ea57f1614e1d16fc750a6c451e48cf52f769214e0c27e38ba',
-      113708
+      113708,
+      -1
     )
   }
 
@@ -20,7 +21,8 @@ module.exports = class Block {
     name = 'none',
     publickey = '0',
     hash = '',
-    nonce = 0
+    nonce = 0,
+    minerID = -1
   ) {
     this.index = index
     this.previousHash = previousHash.toString()
@@ -29,5 +31,6 @@ module.exports = class Block {
     this.publickey = publickey.toString()
     this.hash = hash.toString()
     this.nonce = nonce
+    this.minerID = minerID
   }
 }

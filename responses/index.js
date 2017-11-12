@@ -3,7 +3,10 @@ const {
   QUERY_ALL,
   RESPONSE_BLOCKCHAIN,
   QUERY_PEERS,
-  RESPONSE_PEERS
+  RESPONSE_PEERS,
+  SEND_MINER_ID,
+  RESPONSE_MINER_ID,
+  UPDATE_BLOCK_MINER
 } = require('./response-type');
 
 class Responses {
@@ -51,6 +54,26 @@ class Responses {
     return {
       type: RESPONSE_PEERS,
       data: peerList.toString()
+    }
+  }
+
+  sendMinerID(minerID) {
+    console.log('Sending Miner ID = ' + minerID);
+    return {
+      type: RESPONSE_MINER_ID,
+      data: minerID.toString()
+    }
+  }
+
+  updateBlock(name, publickey, minerID){
+    console.log('Updating Block for Miner ID = ' + minerID);
+    var obj = {};
+    obj.name = name;
+    obj.publickey = publickey;
+    obj.minerID = minerID;
+    return {
+      type: UPDATE_BLOCK_MINER,
+      data: JSON.stringify(obj)
     }
   }
 }

@@ -34,6 +34,8 @@ function prettyPrintBlockchain(blockchain) {
 					obj[`${colors.blue('Hash')}`] = object[key]
 				} else if (key === 'nonce') {
 					obj[`${colors.blue('Nonce')}`] = object[key]
+				} else if (key === 'minerID') {
+					obj[`${colors.blue('Miner ID')}`] = object[key]
 				}
 				table.push(obj)
 			}

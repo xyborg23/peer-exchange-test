@@ -9,7 +9,10 @@ const {
   QUERY_ALL,
   RESPONSE_BLOCKCHAIN,
   QUERY_PEERS,
-  RESPONSE_PEERS
+  RESPONSE_PEERS,
+  SEND_MINER_ID,
+  RESPONSE_MINER_ID,
+  UPDATE_BLOCK_MINER
 } = require('./responses/response-type');
 
 const colors = require('colors/safe');
@@ -19,9 +22,11 @@ const spinner = cli.spinner;
 class PeerToPeer{
 	constructor () {
 		this.peers = [];
+		this.minerID = -1;
 	}
 
 	startServer(port) {
+		this.minerID = 0;
 		const server = net.createServer(socket => p2p.accept(socket, (err, connection) => {
 			if(err) {
 				console.log(colors.red(`${err}`));
@@ -70,6 +75,9 @@ class PeerToPeer{
 		this.peers.push(connection);
 		this.initMessageHandler(connection);
 		this.initErrorHandler(connection);
+		if(this.minerID == 0) {
+			this.sendMinerID(connection);
+		}
 	}
 
 	initMessageHandler(connection) {
@@ -77,6 +85,14 @@ class PeerToPeer{
 			const message = JSON.parse(data.toString('utf8'));
 			this.handleMessage(connection, message);
 		})
+	}
+
+	sendMinerID(connection) {
+		this.write(connection, responses.sendMinerID(this.peers.length));
+	}
+
+	setMinerID(message) {
+		this.minerID = Number(message.data);
 	}
 
 	handleMessage(peer, message) {
@@ -98,6 +114,15 @@ class PeerToPeer{
 				break;
 			case RESPONSE_PEERS:
 				this.handlePeerList(message);
+				break;
+			case RESPONSE_MINER_ID:
+				console.log(colors.magenta('Received miner ID from peer'));
+				this.setMinerID(message);
+				break;
+			case UPDATE_BLOCK_MINER:
+				console.log(colors.magenta('Checking if this is the current Miner'));
+				var obj = JSON.parse(message.data);
+				this.mineUpdate2(obj.name, obj.publickey, obj.minerID);
 				break;
 			default:
 				console.log(colors.red(`Received unknown message type ${message.type}`));
@@ -166,10 +191,28 @@ class PeerToPeer{
 		console.log(JSON.stringify(blockchain, null, 2));
 	}
 
-	mine(name, publickey){
-		blockchain.mine(name, publickey);
+	mine(name, publickey) {
+		blockchain.mine(name, publickey, this.minerID);
 	}
 
+	mineUpdate(name, publickey) {
+		var minerToUpdate = blockchain.findMinerID(name);
+		this.mineUpdate2(name, publickey, minerToUpdate);
+	}
+
+	mineUpdate2(name, publickey, minerToUpdate) {
+		// minerToUpdate = blockchain.findMinerID(name);
+		if (minerToUpdate == -1 ) {
+			// TODO: Make this broadcast and have all miners mine
+			blockchain.mine(name, publickey, this.minerID);
+			this.broadcastLatest();
+		} else if (this.minerID == minerToUpdate) {
+			blockchain.mine(name, publickey, this.minerID);
+			this.broadcastLatest();
+		} else {
+			this.broadcast(responses.updateBlock(name, publickey, minerToUpdate));
+		}
+	}
 	queryName(queryName) {
 		var chain = blockchain.get();
 		var flag = true;
