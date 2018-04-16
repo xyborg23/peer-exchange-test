@@ -11,6 +11,7 @@ git clone git@github.com:xyborg23/peer-exchange-test.git # or clone your own for
 cd peer-exchange-test
 npm install
 node vorpal.js
+start
 ```
 
-### Use the command line tool across multiple terminal tabs or windows to run the applications as different nodes.
+### Use the command line tool across multiple terminal tabs or windows to run the application as different nodes.
