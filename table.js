@@ -1,5 +1,10 @@
+/**
+* Pretty print the blockchain 
+*
+*/
+
 const Table = require('cli-table2');
-const blockchain = require('./blockchain.js');
+const blockchain = require('./blockchain/index.js');
 const colors = require('colors/safe');
 
 function prettyPrintBlockchain(blockchain) {
@@ -23,19 +28,21 @@ function prettyPrintBlockchain(blockchain) {
 				}])
 			} else {
 				if (key === 'previousHash') {
-					obj[`${colors.blue('Previous Hash')}`] = object[key]
+					obj[`${colors.cyan('Previous Hash')}`] = object[key]
 				} else if (key === 'timestamp') {
-					obj[`${colors.blue('Timestamp')}`] = new Date(object[key] * 1000).toUTCString()
+					obj[`${colors.cyan('Timestamp')}`] = new Date(object[key] * 1000).toUTCString()
 				} else if (key === 'name') {
-					obj[`${colors.blue('Name')}`] = object[key]
+					obj[`${colors.cyan('Name')}`] = object[key]
 				} else if (key === 'publickey') {
-					obj[`${colors.blue('Public Key')}`] = object[key]
+					obj[`${colors.cyan('Public Key')}`] = object[key]
 				} else if (key === 'hash') {
-					obj[`${colors.blue('Hash')}`] = object[key]
+					obj[`${colors.cyan('Hash')}`] = object[key]
 				} else if (key === 'nonce') {
-					obj[`${colors.blue('Nonce')}`] = object[key]
+					obj[`${colors.cyan('Nonce')}`] = object[key]
 				} else if (key === 'minerID') {
-					obj[`${colors.blue('Miner ID')}`] = object[key]
+					obj[`${colors.cyan('Miner ID')}`] = object[key]
+				} else if (key === 'revoked') {
+					obj[`${colors.cyan('Revoked')}`] = object[key]
 				}
 				table.push(obj)
 			}

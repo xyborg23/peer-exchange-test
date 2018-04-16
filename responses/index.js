@@ -11,21 +11,21 @@ const {
 
 class Responses {
   getQueryChainLengthMsg () {
-    console.log('Asking peer for latest block');
+    //console.log('Asking peer for latest block');
     return {
       type: QUERY_LATEST
     }
   }
 
   getQueryAllMsg () {
-    console.log('Asking peer for entire blockchain');
+    //console.log('Asking peer for entire blockchain');
     return {
       type: QUERY_ALL
     }
   }
 
   getResponseChainMsg (blockchain) {
-    console.log('Sending peer entire blockchain');
+    //console.log('Sending peer entire blockchain');
     return {
       type: RESPONSE_BLOCKCHAIN,
       data: JSON.stringify(blockchain.get())
@@ -33,7 +33,7 @@ class Responses {
   }
 
   getResponseLatestMsg (blockchain) {
-    console.log('Sending peer latest block');
+    //console.log('Sending peer latest block');
     return {
       type: RESPONSE_BLOCKCHAIN,
       data: JSON.stringify([
@@ -43,14 +43,14 @@ class Responses {
   }
 
   getQueryPeerList() {
-    console.log('Asking peer for peer list');
+    //console.log('Asking peer for peer list');
     return {
       type:QUERY_PEERS
     }
   }
 
   getResponsePeerList(peerList) {
-    console.log('Sending peer list');
+    //console.log('Sending peer list');
     return {
       type: RESPONSE_PEERS,
       data: peerList.toString()
@@ -58,7 +58,7 @@ class Responses {
   }
 
   sendMinerID(minerID) {
-    console.log('Sending Miner ID = ' + minerID);
+    //console.log('Sending Miner ID = ' + minerID);
     return {
       type: RESPONSE_MINER_ID,
       data: minerID.toString()
@@ -66,7 +66,7 @@ class Responses {
   }
 
   updateBlock(name, publickey, minerID){
-    console.log('Updating Block for Miner ID = ' + minerID);
+    //console.log('Updating Block for Miner ID = ' + minerID);
     var obj = {};
     obj.name = name;
     obj.publickey = publickey;

@@ -1,6 +1,11 @@
+/**
+* Command Line Interface class to handle commands from terminal 
+*
+*/
+
 const vorpal = require('vorpal')();
-const node = require('./test.js');
-const blockchain = require('./blockchain.js');
+const node = require('./node.js');
+const blockchain = require('./blockchain/index.js');
 const prettyPrintBlockchain = require('./table.js');
 const colors = require('colors/safe');
 const cli = require('clui');
@@ -23,7 +28,7 @@ vorpal
 			if (returnValue) {
 				console.log('Connecting to the network....');
 				node.connectToPeer('localhost', port);
-				node.updateBlockchain();
+				// node.updateBlockchain();
 			} else {
 				console.log('Starting the network....');
 				node.startServer(port);
@@ -33,7 +38,7 @@ vorpal
 	});
 
 vorpal
-	.command('register <name> <public_key>', 'Mine a new block')
+	.command('register <name> <public_key>', 'Register a name with a public key')
 	.action(function(args, callback) {
 		if(args.name && args.public_key) {
 			var mine_progress = new Spinner('Mining a block, please wait...');
@@ -50,12 +55,29 @@ vorpal
 	});
 
 vorpal
-	.command('update <name> <public_key>', 'Mine a new block')
+	.command('update <name> <public_key>', 'Update an existing name with a new public key')
 	.action(function(args, callback) {
 		if(args.name && args.public_key) {
 			var mine_progress = new Spinner('Mining a block, please wait...');
 			mine_progress.start();
 			node.mineUpdate(args.name, args.public_key);
+			node.broadcastLatest();
+			mine_progress.stop();
+		}
+		else {
+			console.log(colors.red('The arguments are invalid!'));
+			console.log(colors.red('Enter both a name and public key'));
+		}
+		callback();
+	});
+
+vorpal
+	.command('revoke <name> <public_key>', 'Revoke a name and public key')
+	.action(function(args, callback) {
+		if(args.name && args.public_key) {
+			var mine_progress = new Spinner('Mining a block, please wait...');
+			mine_progress.start();
+			node.mineRevoke(args.name, args.public_key);
 			node.broadcastLatest();
 			mine_progress.stop();
 		}
