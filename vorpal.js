@@ -89,6 +89,19 @@ vorpal
 	});
 
 vorpal
+	.command('validate <name> <public_key>', 'Check if a given name and public key pair is valid')
+	.action(function(args, callback) {
+		if(args.name && args.public_key) {
+			node.validatePair(args.name, args.public_key);
+		}
+		else {
+			console.log(colors.red('The arguments are invalid!'));
+			console.log(colors.red('Enter both a name and public key'));
+		}
+		callback();
+	});
+
+vorpal
 	.command('printchain', 'Print the current blockchain')
 	.action(function(args, callback) {
 		prettyPrintBlockchain(blockchain.blockchain);

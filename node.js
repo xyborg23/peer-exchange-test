@@ -28,6 +28,7 @@ class PeerToPeer{
 	constructor () {
 		this.peers = [];
 		this.minerID = -1;
+		this.name_key = {};
 	}
 
 	// Start a network 
@@ -224,7 +225,7 @@ class PeerToPeer{
 
 	// Send message to miner to update block
 	mineUpdate(name, publickey) {
-		if(this.ensureBlockExists(name, publickey)) {
+		if(this.ensureBlockIsValid(name, publickey)) {
 			var minerToUpdate = blockchain.findMinerID(name);
 			this.mineUpdate2(name, publickey, minerToUpdate);
 		} else {
@@ -248,27 +249,31 @@ class PeerToPeer{
 
 	// Mine a new block with the revoke flag on
 	mineRevoke(name, publickey) {
-		if(this.ensureBlockExists(name, publickey))
+		if(this.ensureBlockIsValid(name, publickey))
 			blockchain.mine(name, publickey, this.minerID, true);
 		else
 			console.log(colors.red('Block does not exist! Enter a valid block'));
 	}
 
-	ensureBlockExists(name, publickey) {
+	ensureBlockIsValid(name, publickey) {
 		var chain = blockchain.get();
 		var flag = true;
 		for(var i = chain.length-1; i >= 0; i--) {
 			var blockName = chain[i].name;
 			var blockPublicKey = chain[i].publickey;
-			if(blockName === name)
-				console.log(colors.green('Names are equal'));
-			if(blockPublicKey == publickey)
-				console.log(colors.green('Keys are equal'));
-			if(blockName === name && blockPublicKey == publickey) {
-				return true;
+			if(blockName === name) {
+				if(blockPublicKey == publickey) {
+					return true;
+				}
+				return false;
 			}
 		}
 		return false;
+	}
+
+	// Given a name, public key pair, return if the pair is valid (i.e. the public key matches the latest entry for the name)
+	validatePair(name, public_key) {
+		this.ensureBlockIsValid(name, public_key) ? console.log(colors.green('The pair is valid!')) : console.log(colors.red('This pair is not valid.'));
 	}
 
 	// Query name from the blockchain
