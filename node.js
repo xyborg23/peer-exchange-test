@@ -261,8 +261,9 @@ class PeerToPeer{
 		for(var i = chain.length-1; i >= 0; i--) {
 			var blockName = chain[i].name;
 			var blockPublicKey = chain[i].publickey;
+			var revoked = chain[i].revoked;
 			if(blockName === name) {
-				if(blockPublicKey == publickey) {
+				if(blockPublicKey == publickey && !revoked) {
 					return true;
 				}
 				return false;
