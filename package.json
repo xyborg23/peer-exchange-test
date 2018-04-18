@@ -1,8 +1,8 @@
 {
-  "name": "Blockchain PKI",
+  "name": "BC-PKM",
   "version": "1.0.2",
   "description": "A blockchain based public key infrastructure system for information centric networks.",
-  "main": "index.js",
+  "main": "vorpal.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

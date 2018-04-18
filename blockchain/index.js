@@ -40,7 +40,7 @@ class Blockchain {
       var thisLastBlock = this.blockchain[this.blockchain.length - 1];
       if(newLastBlock.timestamp < thisLastBlock.timestamp) {
         this.blockchain = newBlocks.map(json => new Block(
-          json.index, json.previousHash, json.timestamp, json.name, json.publickey, json.hash, json.nonce, json.minerID
+          json.index, json.previousHash, json.timestamp, json.name, json.publickey, json.hash, json.nonce, json.minerID, json.revoked
         ));
         return null;
       } else {
@@ -53,7 +53,7 @@ class Blockchain {
 
     //console.log(colors.magenta('Received blockchain is valid. Replacing current blockchain with received blockchain'));
     this.blockchain = newBlocks.map(json => new Block(
-      json.index, json.previousHash, json.timestamp, json.name, json.publickey, json.hash, json.nonce, json.minerID
+      json.index, json.previousHash, json.timestamp, json.name, json.publickey, json.hash, json.nonce, json.minerID, json.revoked
     ));
   }
 
@@ -87,7 +87,7 @@ class Blockchain {
   addBlockFromPeer(json) {
     if (this.isValidNewBlock(json, this.latestBlock)) {
       this.blockchain.push(new Block(
-        json.index, json.previousHash, json.timestamp, json.name, json.publickey, json.hash, json.nonce, json.minerID
+        json.index, json.previousHash, json.timestamp, json.name, json.publickey, json.hash, json.nonce, json.minerID, json.revoked
       ))
     }
   }
@@ -122,7 +122,7 @@ class Blockchain {
   }
 
   // Create a new block to add to the chain
-  generateNextBlock (blockName, blockPublicKey, minerID, revoked=false) {
+  generateNextBlock (blockName, blockPublicKey, minerID, revoked) {
     const previousBlock = this.latestBlock;
     const nextIndex = previousBlock.index + 1;
     const nextTimestamp = new Date().getTime() / 1000;

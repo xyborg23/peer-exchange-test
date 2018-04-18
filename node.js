@@ -225,7 +225,7 @@ class PeerToPeer{
 
 	// Send message to miner to update block
 	mineUpdate(name, publickey) {
-		if(this.ensureBlockIsValid(name, publickey)) {
+		if(this.ensureNameIsValid(name)) {
 			var minerToUpdate = blockchain.findMinerID(name);
 			this.mineUpdate2(name, publickey, minerToUpdate);
 		} else {
@@ -253,6 +253,17 @@ class PeerToPeer{
 			blockchain.mine(name, publickey, this.minerID, true);
 		else
 			console.log(colors.red('Block does not exist! Enter a valid block'));
+	}
+
+	ensureNameIsValid(name) {
+		var chain = blockchain.get();
+		for(var i = chain.length-1; i >= 0; i--) {
+			var blockName = chain[i].name;
+			if(blockName === name) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	ensureBlockIsValid(name, publickey) {

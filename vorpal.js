@@ -147,5 +147,5 @@ vorpal
 	});
 
 vorpal
-	.delimiter('blockchainPKI$')
+	.delimiter('BC-PKM$')
 	.show();
